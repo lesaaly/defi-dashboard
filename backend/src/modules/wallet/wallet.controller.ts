@@ -11,4 +11,10 @@ export class WalletController {
   async getBalance(@Param('address') address: string) {
     return this.walletService.getWalletBalance(address);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':address/tokens')
+  async getTokens(@Param('address') address: string) {
+    return this.walletService.getWalletTokens(address);
+  }
 }
