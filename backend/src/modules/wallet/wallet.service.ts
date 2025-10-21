@@ -53,4 +53,48 @@ export class WalletService {
       throw new Error(`Moralis API error: ${error.message}`);
     }
   }
+
+  async getWalletTransactions(address: string) {
+    const apiKey = this.configService.get<string>('MORALIS_API_KEY');
+    const url = `https://deep-index.moralis.io/api/v2.2/${address}?chain=eth`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
+
+      return response.data.result;
+    } catch (error) {
+      throw new Error(`Moralis API error: ${error.message}`);
+    }
+  }
+
+  async getWalletNFTs(address: string) {
+    const apiKey = this.configService.get<string>('MORALIS_API_KEY');
+    const url = `https://deep-index.moralis.io/api/v2.2/${address}/nft?chain=eth&format=decimal`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
+
+      return response.data.result;
+    } catch (error) {
+      throw new Error(`Moralis API error: ${error.message}`);
+    }
+  }
+
+  async getWalletOverview(address: string) {
+    const [balance, transactions, nfts] = await Promise.all([
+      this.getWalletBalance(address),
+      this.getWalletTransactions(address),
+      this.getWalletNFTs(address),
+    ]);
+
+    return { address, balance, transactions, nfts };
+  }
 }
