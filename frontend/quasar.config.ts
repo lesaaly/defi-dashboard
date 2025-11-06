@@ -15,7 +15,7 @@ export default defineConfig((ctx) => {
     boot: ['i18n', 'axios'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
-    css: ['app.scss'],
+    css: ['app.scss', '_typography.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -54,7 +54,7 @@ export default defineConfig((ctx) => {
       // publicPath: '/',
       // analyze: true,
       env: {
-        VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:3000/api'
+        VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:3000/api',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

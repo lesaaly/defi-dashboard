@@ -1,0 +1,74 @@
+/* Общие текстовые стили */
+
+/* Семейство шрифтов */
+$font-primary: 'Inter', sans-serif;
+$font-secondary: 'Roboto', sans-serif;
+
+/* Цвета текста */
+$text-color-primary: #eaeaec;
+$text-color-secondary: #6e6e6e;
+$text-color-accent: #027be3;
+
+/* Размеры текста */
+$text-s: 14px;
+$text-sm: 0.875rem;
+$text-md: 1rem;
+$text-lg: 1.25rem;
+$text-xl: 31px;
+$text-2xl: 2rem;
+
+/* Общие классы */
+.text-primary {
+  color: $text-color-primary;
+  font-family: $font-primary;
+}
+
+.text-secondary {
+  color: $text-color-secondary;
+  font-family: $font-primary;
+}
+
+.text-accent {
+  color: $text-color-accent;
+  font-family: $font-primary;
+}
+
+.text-large {
+  color: $text-color-primary;
+  font-family: $font-primary;
+  font-size: $text-xl;
+}
+
+.text-sm {
+  font-size: $text-sm;
+}
+.text-md {
+  font-size: $text-md;
+}
+.text-lg {
+  font-size: $text-lg;
+}
+.text-xl {
+  font-size: $text-xl;
+}
+.text-2xl {
+  font-size: $text-2xl;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+.text-medium {
+  font-weight: 500;
+}
+.text-regular {
+  font-weight: 400;
+}
+
+.basic-text {
+  font-family: $font-primary;
+  font-weight: 400px;
+  font-size: $text-s;
+  line-height: 14px;
+  color: $text-color-primary;
+}

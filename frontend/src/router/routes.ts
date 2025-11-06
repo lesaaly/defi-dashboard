@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
-import LoginForm from '../features/auth/UI/LoginForm.vue';
+import LoginPage from 'src/pages/LoginPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: '/login',
-    component: LoginForm,
+    component: LoginPage,
     name: 'Login',
   },
 
