@@ -1,27 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { login, type LoginPayload } from '../api/auth';
 
 const email = ref('');
 const password = ref('');
-const error = ref('');
 
-const handleSubmit = async () => {
-  error.value = '';
-  try {
-    const payload: LoginPayload = { email: email.value, password: password.value };
-    const res = await login(payload);
-    localStorage.setItem('token', res.access_token);
-  } catch (err: unknown) {
-    if (err && typeof err === 'object' && 'response' in err) {
-      const axiosError = err as { response?: { data?: { message?: string } } };
-      error.value = axiosError.response?.data?.message || 'Ошибка при входе';
-    } else if (err instanceof Error) {
-      error.value = err.message;
-    } else {
-      error.value = 'Неизвестная ошибка';
-    }
-  }
+const emit = defineEmits<{
+  submit: [payload: { email: string; password: string }];
+}>();
+
+const handleSubmit = () => {
+  emit('submit', {
+    email: email.value,
+    password: password.value,
+  });
 };
 </script>
 
@@ -37,8 +28,9 @@ const handleSubmit = async () => {
             id="email"
             v-model="email"
             label="Email"
+            autocomplete="email"
             class="q-mb-md"
-            color="indigo-3"
+            color="primary"
             input-class="basic-text"
             outlined
           />
@@ -47,12 +39,12 @@ const handleSubmit = async () => {
             id="password"
             v-model="password"
             label="Password"
+            autocomplete="current-password"
             outlined
-            color="indigo-3"
+            color="primary"
             input-class="basic-text"
           />
-          <q-btn type="submit" label="Login" class="form-button text-primary" />
-          <p v-if="error" class="text-red">{{ error }}</p>
+          <q-btn type="submit" label="Login" class="form-button text-primary" text-color="white" />
         </q-form>
       </q-card-section>
     </q-card>
@@ -60,10 +52,6 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped lang="scss">
-.text-red {
-  color: red;
-}
-
 .form-box {
   width: 500px;
   border-radius: 15px;
@@ -86,5 +74,8 @@ const handleSubmit = async () => {
   box-shadow: none;
   margin-top: 30px;
   width: 100%;
+  background: $accent;
+  height: 46px;
+  border-radius: 4px;
 }
 </style>
