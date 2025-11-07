@@ -33,5 +33,24 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
+  // Navigation guard для проверки токена
+  Router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    const requiresAuth = to.meta.requiresAuth === true;
+    const requiresGuest = to.meta.requiresGuest === true;
+
+    // Если маршрут требует авторизации, но токена нет
+    if (requiresAuth && !token) {
+      next({ name: 'Login' });
+    }
+    // Если маршрут требует гостя (неавторизованного), но токен есть
+    else if (requiresGuest && token) {
+      next({ name: 'Main' });
+    }
+    else {
+      next();
+    }
+  });
+
   return Router;
 });

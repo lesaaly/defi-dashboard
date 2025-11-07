@@ -1,1 +1,21 @@
 // app global css in SCSS form
+$size-s: 10px;
+$size-m: 20px;
+
+.bg-primary {
+  background-color: $primary;
+}
+
+.mb-m {
+  margin-bottom: $size-m;
+}
+
+
+
+.q-layout__shadow:after {
+  box-shadow: none;
+}
+
+.q-item__section--avatar {
+  min-width: auto;
+}
