@@ -1,31 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import api from 'src/api/api';
-import { date } from 'quasar';
+import { computed, onMounted, ref } from 'vue';
+import { useWalletStore } from 'src/stores/wallet.store';
 
-interface Transaction {
-  hash: string;
-  from_address: string;
-  to_address: string;
-  value: string;
-  amount?: string;
-  transaction_fee: string;
-}
-
-interface NFT {
-  image?: string;
-  name?: string;
-  token_address?: string;
-  token_id?: string;
-  normalized_metadata?: {
-    image?: string;
-    name?: string;
-  };
-}
-
-const nftsCount = ref(0);
-const txCount = ref(0);
-const transactions = ref<Transaction[]>([]);
+const walletStore = useWalletStore();
 
 const columns = [
   { name: 'hash', label: 'Tx Hash', field: 'hash', align: 'center' as const },
@@ -39,41 +16,45 @@ const truncateHash = (hash: string) => {
   return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
 };
 
-const nftsPreview = ref<NFT[]>([]);
 const carousel = ref(0);
 
-onMounted(async () => {
-  try {
-    const address = '0xf977814e90da44bfa03b6295a0616a897441acec'; // временно
-    // const { data: balanceData } = await api.get(`/wallets/${address}/balance`)
-    const { data: nftData } = await api.get(`/wallets/${address}/nfts`);
-    const { data: txData } = await api.get(`/wallets/${address}/transactions`);
+const nftsCount = computed(() => walletStore.nftsCount);
+const txCount = computed(() => walletStore.txCount);
+const transactions = computed(() => walletStore.transactions);
+const nftsPreview = computed(() => walletStore.nftsPreview);
+const balanceUsd = computed(() => walletStore.balanceUsd);
 
-    if (Array.isArray(nftData)) {
-      nftsCount.value = nftData.length;
-      nftsPreview.value = nftData.slice(0, 5);
-      console.log('NFTs:', nftsPreview.value);
-    }
-    if (Array.isArray(txData)) {
-      txCount.value = txData.length;
-      txData.forEach((tx) => {
-        tx.block_timestamp = date.formatDate(tx.block_timestamp, 'DD.MM.YYYY');
-      });
-      transactions.value = txData;
-    } else {
-      console.error('Транзакции не являются массивом:', txData);
-      transactions.value = [];
-    }
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err);
-    transactions.value = [];
-  }
+onMounted(async () => {
+  const address = '0x00000000219ab540356cbb839cbe05303d7705fa'; // временно
+  await walletStore.fetchWalletData(address);
 });
 </script>
 
 <template>
   <q-page class="q-pa-lg main_page">
-    <div class=""></div>
+    <div class="main_page_overview">
+      <div class="text-title mb-m">Wallet Overview</div>
+
+      <div class="overview-grid">
+        <q-card flat bordered class="overview-card">
+          <div class="overview-value">{{ nftsCount }}</div>
+          <div class="overview-label">NFTs</div>
+        </q-card>
+
+        <q-card flat bordered class="overview-card">
+          <div class="overview-value">{{ txCount }}</div>
+          <div class="overview-label">Transactions</div>
+        </q-card>
+
+        <q-card flat bordered class="overview-card">
+          <div class="overview-value">
+            {{ balanceUsd ? `$${balanceUsd.toFixed(2)}` : '—' }}
+          </div>
+          <div class="overview-label">Balance (USD)</div>
+        </q-card>
+      </div>
+    </div>
+
     <div class="">
       <div class="text-title mb-m">Latest Transactions</div>
       <q-table
@@ -103,6 +84,8 @@ onMounted(async () => {
         navigation
         infinite
         swipeable
+        autoplay
+        animated
         class="nft-carousel"
         control-color="accent"
         height="100%"
@@ -113,7 +96,7 @@ onMounted(async () => {
           :name="index"
           class="nft-slide"
         >
-          <div class="nft-card">
+          <div v-if="nft.normalized_metadata?.image" class="nft-card">
             <div class="text-title mb-m text-center">
               {{ nft.normalized_metadata?.name || 'Unnamed NFT' }}
             </div>
@@ -182,5 +165,45 @@ onMounted(async () => {
 .nft-image {
   border-radius: 20px;
   object-fit: contain;
+}
+
+.main_page_overview {
+  background: $secondary;
+  border-radius: 30px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .overview-card {
+    background: transparent;
+    border-radius: 20px;
+    text-align: center;
+    padding: 20px 0;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+    }
+
+    .overview-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: $light;
+    }
+
+    .overview-label {
+      font-size: 14px;
+      color: $light-secondary;
+      margin-top: 6px;
+    }
+  }
 }
 </style>

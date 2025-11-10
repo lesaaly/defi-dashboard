@@ -20,4 +20,19 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Удаляем невалидный токен
+      localStorage.removeItem('token');
+      // Перенаправляем на страницу логина
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
+  }
+);
+
 export default api;

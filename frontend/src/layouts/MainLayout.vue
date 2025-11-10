@@ -69,8 +69,6 @@ function handleLogout() {
       class="bg-primary q-pa-lg"
     >
       <q-list>
-        <q-item-label header v-if="!miniState"> LOGO </q-item-label>
-
         <q-item clickable class="drawer_item q-mb-sm" @click="toggleLeftDrawer">
           <q-item-section avatar>
             <q-icon name="menu" size="24px" />
